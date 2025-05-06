@@ -81,10 +81,19 @@
       bottom: 0;
       width: 100%;
     }
-    form input, form button {
+    form input, form button, form select {
       width: 100%;
       padding: 10px;
       margin-bottom: 10px;
+    }
+    .two-column-form {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+    .two-column-form .column {
+      flex: 1;
+      min-width: 250px;
     }
     @media (max-width: 768px) {
       nav {
@@ -163,12 +172,66 @@
       <div>
         <h2>Parking Reservation</h2>
         <form id="parkingForm">
-          <label for="name">Full Name:</label>
-          <input type="text" id="name" name="name" required />
-          <label for="plate">Plate Number:</label>
-          <input type="text" id="plate" name="plate" required />
-          <label for="date">Date of Visit:</label>
-          <input type="date" id="date" name="date" required />
+          <div class="two-column-form">
+            <!-- LEFT COLUMN -->
+            <div class="column">
+              <label for="name">Full Name:</label>
+              <input type="text" id="name" name="name" required />
+
+              <label for="gender">Gender:</label>
+              <input type="text" id="gender" name="gender" required />
+
+              <label for="email">Email:</label>
+              <input type="email" id="email" name="email" required />
+
+              <label for="contact">Contact Number:</label>
+              <input type="tel" id="contact" name="contact" required />
+
+              <label for="city">City:</label>
+              <input type="text" id="city" name="city" required />
+
+              <label><strong>Parking Options:</strong></label><br>
+              <label><input type="checkbox" name="slot" value="Car"> Car</label><br>
+              <label><input type="checkbox" name="slot" value="Motorcycle"> Motorcycle</label><br>
+              <label><input type="checkbox" name="slot" value="Van"> Van</label><br>
+            </div>
+
+            <!-- RIGHT COLUMN -->
+            <div class="column">
+              <label for="municipality">Municipality:</label>
+              <input type="text" id="municipality" name="municipality" required />
+
+              <label for="zip">Zip Code:</label>
+              <input type="text" id="zip" name="zip" required />
+
+              <label for="address">Complete Address:</label>
+              <input type="text" id="address" name="address" required />
+
+              <label for="plate">Plate Number:</label>
+              <input type="text" id="plate" name="plate" required />
+
+              <label for="date">Date of Visit:</label>
+              <input type="date" id="date" name="date" required />
+
+              <label><strong>Other Options:</strong></label><br>
+              <label><input type="checkbox" name="slot" value="Bus"> Bus</label><br>
+              <label><input type="checkbox" name="slot" value="Tricycle"> Tricycle</label><br>
+              <label><input type="checkbox" name="slot" value="Others"> Others</label><br>
+            </div>
+          </div>
+
+          <label for="payment">Payment Method:</label>
+          <select id="payment" name="payment" required>
+            <option value="">-- Select Payment --</option>
+            <option value="GCash">GCash</option>
+            <option value="GoTyme">GoTyme</option>
+          </select>
+
+          <div style="margin-top: 10px; font-weight: bold;">
+            For online payment, please send to: <br>
+            GCash / GoTyme Number: <span style="color: green;">0916 218 8172</span>
+          </div>
+
           <button type="submit">Reserve Now</button>
         </form>
         <p id="formMessage"></p>
@@ -193,17 +256,18 @@
   <!-- Firebase Scripts -->
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js"></script>
+
   <script>
     const firebaseConfig = {
-  apiKey: "AIzaSyBJNW9hMngOYf81b8r7ulxV0NCgWVLIhr4",
-  authDomain: "agtalin-shrine-54574.firebaseapp.com",
-  databaseURL: "https://agtalin-shrine-54574-default-rtdb.firebaseio.com",
-  projectId: "agtalin-shrine-54574",
-  storageBucket: "agtalin-shrine-54574.firebasestorage.app",
-  messagingSenderId: "122586547882",
-  appId: "1:122586547882:web:29af01d6f836c66cf9b2d3",
-  measurementId: "G-MNQQBEGCRF"
-};
+      apiKey: "AIzaSyBJNW9hMngOYf81b8r7ulxV0NCgWVLIhr4",
+      authDomain: "agtalin-shrine-54574.firebaseapp.com",
+      databaseURL: "https://agtalin-shrine-54574-default-rtdb.firebaseio.com",
+      projectId: "agtalin-shrine-54574",
+      storageBucket: "agtalin-shrine-54574.firebasestorage.app",
+      messagingSenderId: "122586547882",
+      appId: "1:122586547882:web:29af01d6f836c66cf9b2d3",
+      measurementId: "G-MNQQBEGCRF"
+    };
 
     const app = firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
@@ -211,10 +275,21 @@
     document.getElementById('parkingForm').addEventListener('submit', function (e) {
       e.preventDefault();
       const name = document.getElementById('name').value;
+      const gender = document.getElementById('gender').value;
+      const email = document.getElementById('email').value;
+      const contact = document.getElementById('contact').value;
+      const city = document.getElementById('city').value;
+      const municipality = document.getElementById('municipality').value;
+      const zip = document.getElementById('zip').value;
+      const address = document.getElementById('address').value;
       const plate = document.getElementById('plate').value;
       const date = document.getElementById('date').value;
+      const payment = document.getElementById('payment').value;
 
-      db.ref('parkingReservations').push({ name, plate, date });
+      db.ref('parkingReservations').push({
+        name, gender, email, contact, city,
+        municipality, zip, address, plate, date, payment
+      });
 
       document.getElementById('formMessage').innerText = "Reservation submitted successfully!";
       document.getElementById('parkingForm').reset();
